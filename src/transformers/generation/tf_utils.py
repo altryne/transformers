@@ -716,12 +716,16 @@ class TFGenerationMixin:
                 "(https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)"
             )
 
-        if generation_config.min_length is not None and generation_config.min_length > generation_config.max_length:
+        if (
+            generation_config.min_length is not None
+            and generation_config.max_length is not None
+            and generation_config.min_length > generation_config.max_length
+        ):
             raise ValueError(
                 f"Unfeasable length constraints: the minimum length ({generation_config.min_length}) is larger than"
                 f" the maximum length ({generation_config.max_length})"
             )
-        if input_ids_seq_length >= generation_config.max_length:
+        if generation_config.max_length is not None and input_ids_seq_length >= generation_config.max_length:
             input_ids_string = "decoder_input_ids" if self.config.is_encoder_decoder else "input_ids"
             logger.warning(
                 f"Input length of {input_ids_string} is {input_ids_seq_length}, but `max_length` is set to"
